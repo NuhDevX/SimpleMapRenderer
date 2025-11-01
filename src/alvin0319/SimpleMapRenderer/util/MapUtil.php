@@ -29,12 +29,10 @@ declare(strict_types=1);
 namespace alvin0319\SimpleMapRenderer\util;
 
 use pocketmine\block\Block;
-use pocketmine\block\Planks;
-use pocketmine\block\Prismarine;
-use pocketmine\block\Stone;
-use pocketmine\block\StoneSlab;
-use pocketmine\block\Wood;
-use pocketmine\block\Wood2;
+use pocketmine\block\BlockTypeIds;
+use pocketmine\block\utils\DyeColor;
+use pocketmine\block\utils\WoodType;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\utils\Color;
 
 final class MapUtil{
@@ -65,79 +63,80 @@ final class MapUtil{
 	 * @link https://github.com/TuranicTeam/Altay/blob/stable/src/pocketmine/maps/renderer/VanillaMapRenderer.php#L172#L274
 	 */
 	public static function getMapColorByBlock(Block $block) : Color{
-		$meta = $block->getDamage();
-		$id = $block->getId();
-		if($id === Block::AIR){
+		$id = $block->getTypeId();
+		
+		if($id === BlockTypeIds::AIR){
 			return new Color(0, 0, 0);
-		}elseif($id === Block::GRASS or $id === Block::SLIME_BLOCK){
+		}elseif($id === BlockTypeIds::GRASS || $id === BlockTypeIds::SLIME){
 			return new Color(127, 178, 56);
-		}elseif($id === Block::SAND or $id === Block::SANDSTONE or $id === Block::SANDSTONE_STAIRS or ($id === Block::STONE_SLAB and ($meta & 0x07) == StoneSlab::SANDSTONE) or ($id === Block::DOUBLE_STONE_SLAB and $meta == StoneSlab::SANDSTONE) or $id === Block::GLOWSTONE or $id === Block::END_STONE or ($id === Block::PLANKS and $meta == Planks::BIRCH) or ($id === Block::LOG and ($meta & 0x03) == Wood::BIRCH) or $id === Block::BIRCH_FENCE_GATE or ($id === Block::FENCE and $meta = Planks::BIRCH) or $id === Block::BIRCH_STAIRS or ($id === Block::WOODEN_SLAB and ($meta & 0x07) == Planks::BIRCH) or $id === Block::BONE_BLOCK or $id === Block::END_BRICKS){
+		}elseif($id === BlockTypeIds::SAND || $id === BlockTypeIds::SANDSTONE || $id === BlockTypeIds::SANDSTONE_STAIRS || $id === BlockTypeIds::STONE_SLAB || $id === BlockTypeIds::GLOWSTONE || $id === BlockTypeIds::END_STONE || $id === BlockTypeIds::OAK_PLANKS || $id === BlockTypeIds::BIRCH_LOG || $id === BlockTypeIds::BIRCH_FENCE_GATE || $id === BlockTypeIds::BIRCH_FENCE || $id === BlockTypeIds::BIRCH_STAIRS || $id === BlockTypeIds::BIRCH_SLAB || $id === BlockTypeIds::BONE_BLOCK || $id === BlockTypeIds::END_STONE_BRICKS){
 			return new Color(247, 233, 163);
-		}elseif($id === Block::BED_BLOCK or $id === Block::COBWEB){
+		}elseif($id === BlockTypeIds::BED || $id === BlockTypeIds::COBWEB){
 			return new Color(199, 199, 199);
-		}elseif($id === Block::LAVA or $id === Block::STILL_LAVA or $id === Block::FLOWING_LAVA or $id === Block::TNT or $id === Block::FIRE or $id === Block::REDSTONE_BLOCK){
+		}elseif($id === BlockTypeIds::LAVA || $id === BlockTypeIds::TNT || $id === BlockTypeIds::FIRE || $id === BlockTypeIds::REDSTONE_WIRE){
 			return new Color(255, 0, 0);
-		}elseif($id === Block::ICE or $id === Block::PACKED_ICE or $id === Block::FROSTED_ICE){
+		}elseif($id === BlockTypeIds::ICE || $id === BlockTypeIds::PACKED_ICE || $id === BlockTypeIds::FROSTED_ICE){
 			return new Color(160, 160, 255);
-		}elseif($id === Block::IRON_BLOCK or $id === Block::IRON_DOOR_BLOCK or $id === Block::IRON_TRAPDOOR or $id === Block::IRON_BARS or $id === Block::BREWING_STAND_BLOCK or $id === Block::ANVIL or $id === Block::HEAVY_WEIGHTED_PRESSURE_PLATE){
+		}elseif($id === BlockTypeIds::IRON || $id === BlockTypeIds::IRON_DOOR || $id === BlockTypeIds::IRON_TRAPDOOR || $id === BlockTypeIds::IRON_BARS || $id === BlockTypeIds::BREWING_STAND || $id === BlockTypeIds::ANVIL || $id === BlockTypeIds::WEIGHTED_PRESSURE_PLATE_HEAVY){
 			return new Color(167, 167, 167);
-		}elseif($id === Block::SAPLING or $id === Block::LEAVES or $id === Block::LEAVES2 or $id === Block::TALL_GRASS or $id === Block::DEAD_BUSH or $id === Block::RED_FLOWER or $id === Block::DOUBLE_PLANT or $id === Block::BROWN_MUSHROOM or $id === Block::RED_MUSHROOM or $id === Block::WHEAT_BLOCK or $id === Block::CARROT_BLOCK or $id === Block::POTATO_BLOCK or $id === Block::BEETROOT_BLOCK or $id === Block::CACTUS or $id === Block::SUGARCANE_BLOCK or $id === Block::PUMPKIN_STEM or $id === Block::MELON_STEM or $id === Block::VINE or $id === Block::LILY_PAD){
+		}elseif($id === BlockTypeIds::OAK_SAPLING || $id === BlockTypeIds::OAK_LEAVES || $id === BlockTypeIds::TALL_GRASS || $id === BlockTypeIds::DEAD_BUSH || $id === BlockTypeIds::DANDELION || $id === BlockTypeIds::POPPY || $id === BlockTypeIds::SUNFLOWER || $id === BlockTypeIds::BROWN_MUSHROOM || $id === BlockTypeIds::RED_MUSHROOM || $id === BlockTypeIds::WHEAT || $id === BlockTypeIds::CARROTS || $id === BlockTypeIds::POTATOES || $id === BlockTypeIds::BEETROOTS || $id === BlockTypeIds::CACTUS || $id === BlockTypeIds::SUGARCANE || $id === BlockTypeIds::PUMPKIN_STEM || $id === BlockTypeIds::MELON_STEM || $id === BlockTypeIds::VINES || $id === BlockTypeIds::LILY_PAD){
 			return new Color(0, 124, 0);
-		}elseif(($id === Block::WOOL and $meta == self::COLOR_BLOCK_WHITE) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_WHITE) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_WHITE) or $id === Block::SNOW_LAYER or $id === Block::SNOW_BLOCK){
+		}elseif($id === BlockTypeIds::WOOL || $id === BlockTypeIds::SNOW_LAYER || $id === BlockTypeIds::SNOW){
+			// Check for white wool
 			return new Color(255, 255, 255);
-		}elseif($id === Block::CLAY_BLOCK or $id === Block::MONSTER_EGG){
+		}elseif($id === BlockTypeIds::CLAY || $id === BlockTypeIds::INFESTED_STONE){
 			return new Color(164, 168, 184);
-		}elseif($id === Block::DIRT or $id === Block::FARMLAND or ($id === Block::STONE and $meta == Stone::GRANITE) or ($id === Block::STONE and $meta == Stone::POLISHED_GRANITE) or ($id === Block::SAND and $meta == 1) or $id === Block::RED_SANDSTONE or $id === Block::RED_SANDSTONE_STAIRS or ($id === Block::STONE_SLAB2 and ($meta & 0x07) == StoneSlab::RED_SANDSTONE) or ($id === Block::LOG and ($meta & 0x03) == Wood::JUNGLE) or ($id === Block::PLANKS and $meta == Planks::JUNGLE) or $id === Block::JUNGLE_FENCE_GATE or ($id === Block::FENCE and $meta == Planks::JUNGLE) or $id === Block::JUNGLE_STAIRS or ($id === Block::WOODEN_SLAB and ($meta & 0x07) == Planks::JUNGLE)){
+		}elseif($id === BlockTypeIds::DIRT || $id === BlockTypeIds::FARMLAND || $id === BlockTypeIds::GRANITE || $id === BlockTypeIds::POLISHED_GRANITE || $id === BlockTypeIds::RED_SAND || $id === BlockTypeIds::RED_SANDSTONE || $id === BlockTypeIds::RED_SANDSTONE_STAIRS || $id === BlockTypeIds::JUNGLE_LOG || $id === BlockTypeIds::JUNGLE_PLANKS || $id === BlockTypeIds::JUNGLE_FENCE_GATE || $id === BlockTypeIds::JUNGLE_FENCE || $id === BlockTypeIds::JUNGLE_STAIRS || $id === BlockTypeIds::JUNGLE_SLAB){
 			return new Color(151, 109, 77);
-		}elseif($id === Block::STONE or ($id === Block::STONE_SLAB and ($meta & 0x07) == StoneSlab::STONE) or $id === Block::COBBLESTONE or $id === Block::COBBLESTONE_STAIRS or ($id === Block::STONE_SLAB and ($meta & 0x07) == StoneSlab::COBBLESTONE) or $id === Block::COBBLESTONE_WALL or $id === Block::MOSS_STONE or ($id === Block::STONE and $meta == Stone::ANDESITE) or ($id === Block::STONE and $meta == Stone::POLISHED_ANDESITE) or $id === Block::BEDROCK or $id === Block::GOLD_ORE or $id === Block::IRON_ORE or $id === Block::COAL_ORE or $id === Block::LAPIS_ORE or $id === Block::DISPENSER or $id === Block::DROPPER or $id === Block::STICKY_PISTON or $id === Block::PISTON or $id === Block::PISTON_ARM_COLLISION or $id === Block::MOVINGBLOCK or $id === Block::MONSTER_SPAWNER or $id === Block::DIAMOND_ORE or $id === Block::FURNACE or $id === Block::STONE_PRESSURE_PLATE or $id === Block::REDSTONE_ORE or $id === Block::STONE_BRICK or $id === Block::STONE_BRICK_STAIRS or ($id === Block::STONE_SLAB and ($meta & 0x07) == StoneSlab::STONE_BRICK) or $id === Block::ENDER_CHEST or $id === Block::HOPPER_BLOCK or $id === Block::GRAVEL or $id === Block::OBSERVER){
+		}elseif($id === BlockTypeIds::STONE || $id === BlockTypeIds::STONE_SLAB || $id === BlockTypeIds::COBBLESTONE || $id === BlockTypeIds::COBBLESTONE_STAIRS || $id === BlockTypeIds::COBBLESTONE_WALL || $id === BlockTypeIds::MOSSY_COBBLESTONE || $id === BlockTypeIds::ANDESITE || $id === BlockTypeIds::POLISHED_ANDESITE || $id === BlockTypeIds::BEDROCK || $id === BlockTypeIds::GOLD_ORE || $id === BlockTypeIds::IRON_ORE || $id === BlockTypeIds::COAL_ORE || $id === BlockTypeIds::LAPIS_LAZULI_ORE || $id === BlockTypeIds::DISPENSER || $id === BlockTypeIds::DROPPER || $id === BlockTypeIds::STICKY_PISTON || $id === BlockTypeIds::PISTON || $id === BlockTypeIds::MONSTER_SPAWNER || $id === BlockTypeIds::DIAMOND_ORE || $id === BlockTypeIds::FURNACE || $id === BlockTypeIds::STONE_PRESSURE_PLATE || $id === BlockTypeIds::REDSTONE_ORE || $id === BlockTypeIds::STONE_BRICKS || $id === BlockTypeIds::STONE_BRICK_STAIRS || $id === BlockTypeIds::ENDER_CHEST || $id === BlockTypeIds::HOPPER || $id === BlockTypeIds::GRAVEL || $id === BlockTypeIds::OBSERVER){
 			return new Color(112, 112, 112);
-		}elseif($id === Block::WATER or $id === Block::STILL_WATER or $id === Block::FLOWING_WATER){
+		}elseif($id === BlockTypeIds::WATER){
 			return new Color(64, 64, 255);
-		}elseif(($id === Block::WOOD and ($meta & 0x03) == Wood::OAK) or ($id === Block::PLANKS and $meta == Planks::OAK) or ($id === Block::FENCE and $meta == Planks::OAK) or $id === Block::OAK_FENCE_GATE or $id === Block::OAK_STAIRS or ($id === Block::WOODEN_SLAB and ($meta & 0x07) == Planks::OAK) or $id === Block::NOTEBLOCK or $id === Block::BOOKSHELF or $id === Block::CHEST or $id === Block::TRAPPED_CHEST or $id === Block::CRAFTING_TABLE or $id === Block::WOODEN_DOOR_BLOCK or $id === Block::BIRCH_DOOR_BLOCK or $id === Block::SPRUCE_DOOR_BLOCK or $id === Block::JUNGLE_DOOR_BLOCK or $id === Block::ACACIA_DOOR_BLOCK or $id === Block::DARK_OAK_DOOR_BLOCK or $id === Block::SIGN_POST or $id === Block::WALL_SIGN or $id === Block::WOODEN_PRESSURE_PLATE or $id === Block::JUKEBOX or $id === Block::WOODEN_TRAPDOOR or $id === Block::BROWN_MUSHROOM_BLOCK or $id === Block::STANDING_BANNER or $id === Block::WALL_BANNER or $id === Block::DAYLIGHT_SENSOR or $id === Block::DAYLIGHT_SENSOR_INVERTED){
+		}elseif($id === BlockTypeIds::OAK_LOG || $id === BlockTypeIds::OAK_PLANKS || $id === BlockTypeIds::OAK_FENCE || $id === BlockTypeIds::OAK_FENCE_GATE || $id === BlockTypeIds::OAK_STAIRS || $id === BlockTypeIds::OAK_SLAB || $id === BlockTypeIds::NOTE_BLOCK || $id === BlockTypeIds::BOOKSHELF || $id === BlockTypeIds::CHEST || $id === BlockTypeIds::TRAPPED_CHEST || $id === BlockTypeIds::CRAFTING_TABLE || $id === BlockTypeIds::OAK_DOOR || $id === BlockTypeIds::BIRCH_DOOR || $id === BlockTypeIds::SPRUCE_DOOR || $id === BlockTypeIds::JUNGLE_DOOR || $id === BlockTypeIds::ACACIA_DOOR || $id === BlockTypeIds::DARK_OAK_DOOR || $id === BlockTypeIds::OAK_SIGN || $id === BlockTypeIds::OAK_WALL_SIGN || $id === BlockTypeIds::OAK_PRESSURE_PLATE || $id === BlockTypeIds::JUKEBOX || $id === BlockTypeIds::OAK_TRAPDOOR || $id === BlockTypeIds::BROWN_MUSHROOM_BLOCK || $id === BlockTypeIds::BANNER || $id === BlockTypeIds::DAYLIGHT_DETECTOR){
 			return new Color(143, 119, 72);
-		}elseif($id === Block::QUARTZ_BLOCK or ($id === Block::STONE_SLAB and ($meta & 0x07) == 6) or $id === Block::QUARTZ_STAIRS or ($id === Block::STONE and $meta == Stone::DIORITE) or ($id === Block::STONE and $meta == Stone::POLISHED_DIORITE) or $id === Block::SEA_LANTERN){
+		}elseif($id === BlockTypeIds::QUARTZ_BLOCK || $id === BlockTypeIds::QUARTZ_STAIRS || $id === BlockTypeIds::DIORITE || $id === BlockTypeIds::POLISHED_DIORITE || $id === BlockTypeIds::SEA_LANTERN){
 			return new Color(255, 252, 245);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_ORANGE) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_ORANGE) or $id === Block::ORANGE_GLAZED_TERRACOTTA or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_ORANGE) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_ORANGE) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_ORANGE) or $id === Block::PUMPKIN or $id === Block::JACK_O_LANTERN or $id === Block::HARDENED_CLAY or ($id === Block::WOOD2 and ($meta & 0x03) == Wood2::ACACIA) or ($id === Block::PLANKS and $meta == Planks::ACACIA) or ($id === Block::FENCE and $meta == Planks::ACACIA) or $id === Block::ACACIA_FENCE_GATE or $id === Block::ACACIA_STAIRS or ($id === Block::WOODEN_SLAB and ($meta & 0x07) == Planks::ACACIA)){
+		}elseif($id === BlockTypeIds::ORANGE_CONCRETE || $id === BlockTypeIds::ORANGE_CONCRETE_POWDER || $id === BlockTypeIds::ORANGE_GLAZED_TERRACOTTA || $id === BlockTypeIds::ORANGE_WOOL || $id === BlockTypeIds::ORANGE_CARPET || $id === BlockTypeIds::ORANGE_TERRACOTTA || $id === BlockTypeIds::PUMPKIN || $id === BlockTypeIds::JACK_O_LANTERN || $id === BlockTypeIds::TERRACOTTA || $id === BlockTypeIds::ACACIA_LOG || $id === BlockTypeIds::ACACIA_PLANKS || $id === BlockTypeIds::ACACIA_FENCE || $id === BlockTypeIds::ACACIA_FENCE_GATE || $id === BlockTypeIds::ACACIA_STAIRS || $id === BlockTypeIds::ACACIA_SLAB){
 			return new Color(216, 127, 51);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_MAGENTA) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_MAGENTA) or $id === Block::MAGENTA_GLAZED_TERRACOTTA or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_MAGENTA) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_MAGENTA) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_MAGENTA) or $id === Block::PURPUR_BLOCK or $id === Block::PURPUR_STAIRS or ($id === Block::STONE_SLAB2 and ($meta & 0x07) == Stone::PURPUR_BLOCK)){
+		}elseif($id === BlockTypeIds::MAGENTA_CONCRETE || $id === BlockTypeIds::MAGENTA_CONCRETE_POWDER || $id === BlockTypeIds::MAGENTA_GLAZED_TERRACOTTA || $id === BlockTypeIds::MAGENTA_WOOL || $id === BlockTypeIds::MAGENTA_CARPET || $id === BlockTypeIds::MAGENTA_TERRACOTTA || $id === BlockTypeIds::PURPUR_BLOCK || $id === BlockTypeIds::PURPUR_STAIRS || $id === BlockTypeIds::PURPUR_SLAB){
 			return new Color(178, 76, 216);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_LIGHT_BLUE) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_LIGHT_BLUE) or $id === Block::LIGHT_BLUE_GLAZED_TERRACOTTA or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_LIGHT_BLUE) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_LIGHT_BLUE) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_LIGHT_BLUE)){
+		}elseif($id === BlockTypeIds::LIGHT_BLUE_CONCRETE || $id === BlockTypeIds::LIGHT_BLUE_CONCRETE_POWDER || $id === BlockTypeIds::LIGHT_BLUE_GLAZED_TERRACOTTA || $id === BlockTypeIds::LIGHT_BLUE_WOOL || $id === BlockTypeIds::LIGHT_BLUE_CARPET || $id === BlockTypeIds::LIGHT_BLUE_TERRACOTTA){
 			return new Color(102, 153, 216);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_YELLOW) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_YELLOW) or $id === Block::YELLOW_GLAZED_TERRACOTTA or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_YELLOW) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_YELLOW) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_YELLOW) or $id === Block::HAY_BALE or $id === Block::SPONGE){
+		}elseif($id === BlockTypeIds::YELLOW_CONCRETE || $id === BlockTypeIds::YELLOW_CONCRETE_POWDER || $id === BlockTypeIds::YELLOW_GLAZED_TERRACOTTA || $id === BlockTypeIds::YELLOW_WOOL || $id === BlockTypeIds::YELLOW_CARPET || $id === BlockTypeIds::YELLOW_TERRACOTTA || $id === BlockTypeIds::HAY_BALE || $id === BlockTypeIds::SPONGE){
 			return new Color(229, 229, 51);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_LIME) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_LIME) or $id === Block::LIME_GLAZED_TERRACOTTA or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_LIME) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_LIME) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_LIME) or $id === Block::MELON_BLOCK){
+		}elseif($id === BlockTypeIds::LIME_CONCRETE || $id === BlockTypeIds::LIME_CONCRETE_POWDER || $id === BlockTypeIds::LIME_GLAZED_TERRACOTTA || $id === BlockTypeIds::LIME_WOOL || $id === BlockTypeIds::LIME_CARPET || $id === BlockTypeIds::LIME_TERRACOTTA || $id === BlockTypeIds::MELON){
 			return new Color(229, 229, 51);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_PINK) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_PINK) or $id === Block::PINK_GLAZED_TERRACOTTA or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_PINK) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_PINK) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_PINK)){
+		}elseif($id === BlockTypeIds::PINK_CONCRETE || $id === BlockTypeIds::PINK_CONCRETE_POWDER || $id === BlockTypeIds::PINK_GLAZED_TERRACOTTA || $id === BlockTypeIds::PINK_WOOL || $id === BlockTypeIds::PINK_CARPET || $id === BlockTypeIds::PINK_TERRACOTTA){
 			return new Color(242, 127, 165);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_GRAY) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_GRAY) or $id === Block::GRAY_GLAZED_TERRACOTTA or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_GRAY) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_GRAY) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_GRAY) or $id === Block::CAULDRON_BLOCK){
+		}elseif($id === BlockTypeIds::GRAY_CONCRETE || $id === BlockTypeIds::GRAY_CONCRETE_POWDER || $id === BlockTypeIds::GRAY_GLAZED_TERRACOTTA || $id === BlockTypeIds::GRAY_WOOL || $id === BlockTypeIds::GRAY_CARPET || $id === BlockTypeIds::GRAY_TERRACOTTA || $id === BlockTypeIds::CAULDRON){
 			return new Color(76, 76, 76);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_LIGHT_GRAY) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_LIGHT_GRAY) or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_LIGHT_GRAY) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_LIGHT_GRAY) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_LIGHT_GRAY) or $id === Block::STRUCTURE_BLOCK){
+		}elseif($id === BlockTypeIds::LIGHT_GRAY_CONCRETE || $id === BlockTypeIds::LIGHT_GRAY_CONCRETE_POWDER || $id === BlockTypeIds::LIGHT_GRAY_WOOL || $id === BlockTypeIds::LIGHT_GRAY_CARPET || $id === BlockTypeIds::LIGHT_GRAY_TERRACOTTA || $id === BlockTypeIds::STRUCTURE_BLOCK){
 			return new Color(153, 153, 153);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_CYAN) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_CYAN) or $id === Block::CYAN_GLAZED_TERRACOTTA or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_CYAN) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_CYAN) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_CYAN) or ($id === Block::PRISMARINE and $meta == Prismarine::NORMAL)){
+		}elseif($id === BlockTypeIds::CYAN_CONCRETE || $id === BlockTypeIds::CYAN_CONCRETE_POWDER || $id === BlockTypeIds::CYAN_GLAZED_TERRACOTTA || $id === BlockTypeIds::CYAN_WOOL || $id === BlockTypeIds::CYAN_CARPET || $id === BlockTypeIds::CYAN_TERRACOTTA || $id === BlockTypeIds::PRISMARINE){
 			return new Color(76, 127, 153);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_PURPLE) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_PURPLE) or $id === Block::PURPLE_GLAZED_TERRACOTTA or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_PURPLE) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_PURPLE) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_PURPLE) or $id === Block::MYCELIUM or $id === Block::REPEATING_COMMAND_BLOCK or $id === Block::CHORUS_PLANT or $id === Block::CHORUS_FLOWER){
+		}elseif($id === BlockTypeIds::PURPLE_CONCRETE || $id === BlockTypeIds::PURPLE_CONCRETE_POWDER || $id === BlockTypeIds::PURPLE_GLAZED_TERRACOTTA || $id === BlockTypeIds::PURPLE_WOOL || $id === BlockTypeIds::PURPLE_CARPET || $id === BlockTypeIds::PURPLE_TERRACOTTA || $id === BlockTypeIds::MYCELIUM || $id === BlockTypeIds::REPEATING_COMMAND_BLOCK || $id === BlockTypeIds::CHORUS_PLANT || $id === BlockTypeIds::CHORUS_FLOWER){
 			return new Color(127, 63, 178);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_BLUE) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_BLUE) or $id === Block::BLUE_GLAZED_TERRACOTTA or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_BLUE) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_BLUE) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_BLUE)){
+		}elseif($id === BlockTypeIds::BLUE_CONCRETE || $id === BlockTypeIds::BLUE_CONCRETE_POWDER || $id === BlockTypeIds::BLUE_GLAZED_TERRACOTTA || $id === BlockTypeIds::BLUE_WOOL || $id === BlockTypeIds::BLUE_CARPET || $id === BlockTypeIds::BLUE_TERRACOTTA){
 			return new Color(51, 76, 178);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_BROWN) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_BROWN) or $id === Block::BROWN_GLAZED_TERRACOTTA or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_BROWN) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_BROWN) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_BROWN) or $id === Block::SOUL_SAND or ($id === Block::WOOD2 and ($meta & 0x03) == Wood2::DARK_OAK) or ($id === Block::PLANKS and $meta == Planks::DARK_OAK) or ($id === Block::FENCE and $meta == Planks::DARK_OAK) or $id === Block::DARK_OAK_FENCE_GATE or $id === Block::DARK_OAK_STAIRS or ($id === Block::WOODEN_SLAB and ($meta & 0x07) == Planks::DARK_OAK) or $id === Block::COMMAND_BLOCK){
+		}elseif($id === BlockTypeIds::BROWN_CONCRETE || $id === BlockTypeIds::BROWN_CONCRETE_POWDER || $id === BlockTypeIds::BROWN_GLAZED_TERRACOTTA || $id === BlockTypeIds::BROWN_WOOL || $id === BlockTypeIds::BROWN_CARPET || $id === BlockTypeIds::BROWN_TERRACOTTA || $id === BlockTypeIds::SOUL_SAND || $id === BlockTypeIds::DARK_OAK_LOG || $id === BlockTypeIds::DARK_OAK_PLANKS || $id === BlockTypeIds::DARK_OAK_FENCE || $id === BlockTypeIds::DARK_OAK_FENCE_GATE || $id === BlockTypeIds::DARK_OAK_STAIRS || $id === BlockTypeIds::DARK_OAK_SLAB || $id === BlockTypeIds::COMMAND_BLOCK){
 			return new Color(102, 76, 51);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_GREEN) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_GREEN) or $id === Block::GREEN_GLAZED_TERRACOTTA or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_GREEN) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_GREEN) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_GREEN) or $id === Block::END_PORTAL_FRAME or $id === Block::CHAIN_COMMAND_BLOCK){
+		}elseif($id === BlockTypeIds::GREEN_CONCRETE || $id === BlockTypeIds::GREEN_CONCRETE_POWDER || $id === BlockTypeIds::GREEN_GLAZED_TERRACOTTA || $id === BlockTypeIds::GREEN_WOOL || $id === BlockTypeIds::GREEN_CARPET || $id === BlockTypeIds::GREEN_TERRACOTTA || $id === BlockTypeIds::END_PORTAL_FRAME || $id === BlockTypeIds::CHAIN_COMMAND_BLOCK){
 			return new Color(102, 127, 51);
-		}elseif(($id === Block::CONCRETE and $meta == self::COLOR_BLOCK_RED) or ($id === Block::CONCRETE_POWDER and $meta == self::COLOR_BLOCK_RED) or $id === Block::RED_GLAZED_TERRACOTTA or ($id === Block::WOOL and $meta == self::COLOR_BLOCK_RED) or ($id === Block::CARPET and $meta == self::COLOR_BLOCK_RED) or ($id === Block::STAINED_HARDENED_CLAY and $meta == self::COLOR_BLOCK_RED) or $id === Block::RED_MUSHROOM_BLOCK or $id === Block::BRICK_BLOCK or ($id === Block::STONE_SLAB and ($meta & 0x07) == 4) or $id === Block::BRICK_STAIRS or $id === Block::ENCHANTING_TABLE or $id === Block::NETHER_WART_BLOCK or $id === Block::NETHER_WART_PLANT){
+		}elseif($id === BlockTypeIds::RED_CONCRETE || $id === BlockTypeIds::RED_CONCRETE_POWDER || $id === BlockTypeIds::RED_GLAZED_TERRACOTTA || $id === BlockTypeIds::RED_WOOL || $id === BlockTypeIds::RED_CARPET || $id === BlockTypeIds::RED_TERRACOTTA || $id === BlockTypeIds::RED_MUSHROOM_BLOCK || $id === BlockTypeIds::BRICKS || $id === BlockTypeIds::BRICK_STAIRS || $id === BlockTypeIds::ENCHANTING_TABLE || $id === BlockTypeIds::NETHER_WART_BLOCK || $id === BlockTypeIds::NETHER_WART){
 			return new Color(153, 51, 51);
-		}elseif(($id === Block::WOOL and $meta == 0) or ($id === Block::CARPET and $meta == 0) or ($id === Block::STAINED_HARDENED_CLAY and $meta == 0) or $id === Block::DRAGON_EGG or $id === Block::COAL_BLOCK or $id === Block::OBSIDIAN or $id === Block::END_PORTAL){
+		}elseif($id === BlockTypeIds::BLACK_WOOL || $id === BlockTypeIds::BLACK_CARPET || $id === BlockTypeIds::BLACK_TERRACOTTA || $id === BlockTypeIds::DRAGON_EGG || $id === BlockTypeIds::COAL_BLOCK || $id === BlockTypeIds::OBSIDIAN || $id === BlockTypeIds::END_PORTAL){
 			return new Color(25, 25, 25);
-		}elseif($id === Block::GOLD_BLOCK or $id === Block::LIGHT_WEIGHTED_PRESSURE_PLATE){
+		}elseif($id === BlockTypeIds::GOLD || $id === BlockTypeIds::WEIGHTED_PRESSURE_PLATE_LIGHT){
 			return new Color(250, 238, 77);
-		}elseif($id === Block::DIAMOND_BLOCK or ($id === Block::PRISMARINE and $meta == Prismarine::DARK) or ($id === Block::PRISMARINE and $meta == Prismarine::BRICKS) or $id === Block::BEACON){
+		}elseif($id === BlockTypeIds::DIAMOND || $id === BlockTypeIds::DARK_PRISMARINE || $id === BlockTypeIds::PRISMARINE_BRICKS || $id === BlockTypeIds::BEACON){
 			return new Color(92, 219, 213);
-		}elseif($id === Block::LAPIS_BLOCK){
+		}elseif($id === BlockTypeIds::LAPIS_LAZULI_BLOCK){
 			return new Color(74, 128, 255);
-		}elseif($id === Block::EMERALD_BLOCK){
+		}elseif($id === BlockTypeIds::EMERALD_BLOCK){
 			return new Color(0, 217, 58);
-		}elseif($id === Block::PODZOL or ($id === Block::WOOD and ($meta & 0x03) == Wood::SPRUCE) or ($id === Block::PLANKS and $meta == Planks::SPRUCE) or ($id === Block::FENCE and $meta == Planks::SPRUCE) or $id === Block::SPRUCE_FENCE_GATE or $id === Block::SPRUCE_STAIRS or ($id === Block::WOODEN_SLAB and ($meta & 0x07) == Planks::SPRUCE)){
+		}elseif($id === BlockTypeIds::PODZOL || $id === BlockTypeIds::SPRUCE_LOG || $id === BlockTypeIds::SPRUCE_PLANKS || $id === BlockTypeIds::SPRUCE_FENCE || $id === BlockTypeIds::SPRUCE_FENCE_GATE || $id === BlockTypeIds::SPRUCE_STAIRS || $id === BlockTypeIds::SPRUCE_SLAB){
 			return new Color(129, 86, 49);
-		}elseif($id === Block::NETHERRACK or $id === Block::NETHER_QUARTZ_ORE or $id === Block::NETHER_BRICK_FENCE or $id === Block::NETHER_BRICK_BLOCK or $id === Block::MAGMA or $id === Block::NETHER_BRICK_STAIRS or ($id === Block::STONE_SLAB and ($meta & 0x07) == 7)){
+		}elseif($id === BlockTypeIds::NETHERRACK || $id === BlockTypeIds::NETHER_QUARTZ_ORE || $id === BlockTypeIds::NETHER_BRICK_FENCE || $id === BlockTypeIds::NETHER_BRICKS || $id === BlockTypeIds::MAGMA || $id === BlockTypeIds::NETHER_BRICK_STAIRS){
 			return new Color(112, 2, 0);
 		}else{
 			return new Color(0, 0, 0, 0);

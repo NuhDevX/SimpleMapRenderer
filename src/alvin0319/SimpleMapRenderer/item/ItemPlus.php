@@ -3,7 +3,7 @@
 alvin0319\SimpleMapRenderer\item;
 
 use pocketmine\utils\CloningRegistryTrait;
-uae pocketmine\item\ItemIdentifier;
+use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemTypeIds;
 class ItemPlus {
   use CloningRegistryTrait;

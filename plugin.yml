@@ -1,6 +1,6 @@
 name: SimpleMapRenderer
 author: alvin0319
 main: alvin0319\SimpleMapRenderer\SimpleMapRenderer
-version: 1.0.4
-api: 3.0.0
-mcpe-protocol: 471
+version: 1.0.5
+api: 5.0.0
+

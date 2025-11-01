@@ -29,19 +29,19 @@ declare(strict_types=1);
 namespace alvin0319\SimpleMapRenderer\data;
 
 use pocketmine\math\Vector3;
-use pocketmine\utils\Color;
+use pocketmine\color\Color;
 
 use function implode;
 
 final class MapData{
-	/** @var int */
-	protected $id;
+	
+	protected int $id;
 	/** @var Color[][] */
-	protected $colors = [];
-	/** @var bool */
-	protected $displayPlayers = false;
-	/** @var Vector3 */
-	protected $center;
+	protected array $colors = [];
+	
+	protected bool $displayPlayers = false;
+	
+	protected Vector3 $center;
 
 	public function __construct(int $id, array $colors, bool $displayPlayers, Vector3 $center){
 		$this->id = $id;

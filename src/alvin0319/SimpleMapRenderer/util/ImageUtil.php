@@ -28,7 +28,7 @@ declare(strict_types=1);
 
 namespace alvin0319\SimpleMapRenderer\util;
 
-use pocketmine\utils\Color;
+use pocketmine\color\Color;
 
 use function file_exists;
 use function imagecolorallocate;
@@ -52,14 +52,14 @@ class ImageUtil{
 	 * @return resource|null
 	 * @see imagedestroy()
 	 */
-	public static function fromPNG(string $png){
-		if(!file_exists($png)){
+	public static function fromPNG(string $imageInfo){
+		if(!file_exists($imageInfo)){
 			return null;
 		}
-		if(pathinfo($png, PATHINFO_EXTENSION) !== "png"){
+		if(pathinfo($imageInfo, PATHINFO_EXTENSION) !== "png" || pathinfo($imageInfo, PATHINFO_EXTENSION) !== "jpg" || pathinfo($imageInfo, PATHINFO_EXTENSION) !== "jpeg"){
 			return null;
 		}
-		$image = @imagecreatefrompng($png);
+		$image = @imagecreatefrompng($imageInfo);
 		if($image === false){
 			return null;
 		}

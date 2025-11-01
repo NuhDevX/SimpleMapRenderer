@@ -31,7 +31,7 @@ namespace alvin0319\SimpleMapRenderer\task;
 use alvin0319\SimpleMapRenderer\MapFactory;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
-use pocketmine\utils\Color;
+use pocketmine\color\Color;
 
 use function file_exists;
 use function imagecolorat;
@@ -73,14 +73,14 @@ class MapImageFetchAsyncTask extends AsyncTask{
 	 *
 	 * @return resource|null
 	 */
-	private function fetch(string $png){
-		if(!file_exists($png)){
+	private function fetch(string $imageInfo){
+		if(!file_exists($imageInfo)){
 			return null;
 		}
-		if(pathinfo($png, PATHINFO_EXTENSION) !== "png"){
+		if(pathinfo($imageInfo, PATHINFO_EXTENSION) !== "png" || pathinfo($imageInfo, PATHINFO_EXTENSION) !== "jpg" || pathinfo($imageInfo, PATHINFO_EXTENSION) !== "jpeg"){
 			return null;
 		}
-		$image = @imagecreatefrompng($png);
+		$image = @imagecreatefrompng($imageInfo);
 		if($image === false){
 			return null;
 		}

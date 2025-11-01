@@ -37,8 +37,8 @@ use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\ClientboundMapItemDataPacket;
 use pocketmine\network\mcpe\protocol\MapInfoRequestPacket;
 use pocketmine\network\mcpe\protocol\types\MapDecoration;
-use pocketmine\Player;
-use pocketmine\utils\Color;
+use pocketmine\player\Player;
+use pocketmine\color\Color;
 
 use function count;
 
@@ -46,11 +46,11 @@ class EventListener implements Listener{
 
 	public function onDataPacketReceived(DataPacketReceiveEvent $event) : void{
 		$packet = $event->getPacket();
-		$player = $event->getPlayer();
+		$player = $event->getOrigin()->getPlayer();
 		if($packet instanceof MapInfoRequestPacket){
 			$mapId = $packet->mapId;
 			if(($mapData = MapFactory::getInstance()->getMapData($mapId)) !== null){
-				$event->setCancelled();
+				$event->cancel();
 				$this->sendMapInfo($player, $mapId, $mapData);
 			}
 		}
@@ -67,13 +67,13 @@ class EventListener implements Listener{
 				 */
 				foreach($includePlayers as $playerId){
 					/** @var Player $target */
-					$target = $player->getServer()->findEntity($playerId);
+					$target = Server::getInstance()->getWorldManager()->getDefaultWorld()->getEntity($playerId);
 					$pk->decorations[] = $this->getMapDecoration($mapData, $target);
 				}
 			}
 		}
 		$pk->type = ClientboundMapItemDataPacket::BITFLAG_TEXTURE_UPDATE;
-		$pk->width = $pk->height = 128;
+		//$pk->width = $pk->height = 128;
 		$pk->scale = 1;
 		$player->sendDataPacket($pk);
 	}
@@ -93,8 +93,8 @@ class EventListener implements Listener{
 		$rotation = $player->getYaw();
 
 		$i = 1 << 0;
-		$f = ($player->getFloorX() - $data->getCenter()->getX()) / $i;
-		$f1 = ($player->getFloorZ() - $data->getCenter()->getZ()) / $i;
+		$f = ($player->getPosition->getFloorX() - $data->getCenter()->getX()) / $i;
+		$f1 = ($player->getPosition()->getFloorZ() - $data->getCenter()->getZ()) / $i;
 		$b0 = (int) (($f * 2.0) + 0.5);
 		$b1 = (int) (($f1 * 2.0) + 0.5);
 		$j = 63;

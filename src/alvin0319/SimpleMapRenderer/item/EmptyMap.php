@@ -31,46 +31,71 @@ namespace alvin0319\SimpleMapRenderer\item;
 use alvin0319\SimpleMapRenderer\data\MapData;
 use alvin0319\SimpleMapRenderer\MapFactory;
 use alvin0319\SimpleMapRenderer\util\MapUtil;
-use pocketmine\item\Item;
-use pocketmine\item\ItemFactory;
-use pocketmine\item\ItemIds;
 use pocketmine\math\Vector3;
-use pocketmine\Player;
+use pocketmine\player\Player;
+use pocketmine\item\Item;
+use pocketmine\item\ItemUseResult;
 
-class EmptyMap extends Item{
+class FilledMap extends Item{
 
+	public const TAG_MAP_IS_SCALING = "map_is_scaling"; // TAG_Byte
+	public const TAG_MAP_SCALE = "map_scale"; // TAG_Byte
+	public const TAG_MAP_UUID = "map_uuid"; // TAG_Long
+	public const TAG_MAP_DISPLAY_PLAYERS = "map_display_players"; // TAG_Byte
+	public const TAG_MAP_NAME_INDEX = "map_name_index"; // TAG_Int
+	public const TAG_MAP_IS_INIT = "map_is_init"; // TAG_Byte
 	public const TYPE_EXPLORER_PLAYER = 2;
 
-	public function __construct(int $meta = 0){
-		parent::__construct(self::EMPTY_MAP, $meta, "Empty Map");
-	}
-
-	public function onClickAir(Player $player, Vector3 $directionVector) : bool{
+	public function onClickAir(Player $player, Vector3 $directionVector, array &$returnedItems) : ItemUseResult{
 		/** @var FilledMap $map */
-		$map = ItemFactory::get(ItemIds::FILLED_MAP, 0, 1);
-		$map->setDisplayPlayers($this->meta === self::TYPE_EXPLORER_PLAYER);
+		$map = ItemPlus::FILLED_MAP();
+		$map->setDisplayPlayers(2 === self::TYPE_EXPLORER_PLAYER);
 		$map->setMapId(MapFactory::getInstance()->nextId());
 
 		$colors = [];
 		for($x = 0; $x < 128; $x++){
 			for($y = 0; $y < 128; $y++){
-				$realX = $player->getFloorX() - 64 + $x;
-				$realY = $player->getFloorZ() - 64 + $y;
-				$maxY = $player->getLevel()->getHighestBlockAt($realX, $realY);
-				$block = $player->getLevel()->getBlockAt($realX, $maxY, $realY);
+				$realX = $player->getPosition()->getFloorX() - 64 + $x;
+				$realY = $player->getPosition()->getFloorZ() - 64 + $y;
+				$maxY = $player->getWorld()->getHighestBlockAt($realX, $realY);
+				$block = $player->getWorld()->getBlockAt($realX, $maxY, $realY);
 				$color = MapUtil::getMapColorByBlock($block);
 				$colors[$y][$x] = $color;
 			}
 		}
 
-		MapFactory::getInstance()->registerData(new MapData($map->getMapId(), $colors, $map->getDisplayPlayers(), $player->floor()));
+		MapFactory::getInstance()->registerData(new MapData($map->getMapId(), $colors, $map->getDisplayPlayers(), $player->getPosition()->floor()));
 
 		if($player->getInventory()->canAddItem($map)){
 			$player->getInventory()->addItem($map);
 		}else{
-			$player->getLevel()->dropItem($player->floor()->add(0.5, 0.5, 0.5), $map);
+			$player->getWorld()->dropItem($player->floor()->add(0.5, 0.5, 0.5), $map);
 		}
 		$this->pop();
-		return true;
+		return ItemUseResult::SUCCES();
 	}
+
+	public function setDisplayPlayers(bool $displayPlayers) : void{
+		$this->getNamedTag()->setByte(self::TAG_MAP_DISPLAY_PLAYERS, (int) $displayPlayers);
+	}
+
+	public function setIsScaling(bool $isScaling) : void{
+		$this->getNamedTag()->setByte(self::TAG_MAP_IS_SCALING, (int) $isScaling);
+	}
+
+	public function setMapId(int $id) : void{
+		$this->getNamedTag()->setLong(self::TAG_MAP_UUID, $id);
+	}
+
+	public function getMapId() : int{
+		return $this->getNamedTag()->getLong(self::TAG_MAP_UUID);
+	}
+
+	public function getDisplayPlayers() : bool{
+		return (bool) $this->getNamedTag()->getByte(self::TAG_MAP_DISPLAY_PLAYERS);
+	}
+
+	public function getIsScaling() : bool{
+		return (bool) $this->getNamedTag()->getByte(self::TAG_MAP_IS_SCALING);
+    }
 }

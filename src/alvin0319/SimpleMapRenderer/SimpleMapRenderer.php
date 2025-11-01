@@ -28,14 +28,15 @@ declare(strict_types=1);
 
 namespace alvin0319\SimpleMapRenderer;
 
-use alvin0319\SimpleMapRenderer\item\EmptyMap;
+use alvin0319\SimpleMapRenderer\item\ItemPlus;
 use alvin0319\SimpleMapRenderer\item\FilledMap;
 use pocketmine\item\Item;
-use pocketmine\item\ItemFactory;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginException;
 use pocketmine\utils\Config;
-
+use pocketmine\inventory\CreativeInventory;
+use pocketmine\item\StringToItemParser;
+use pocketmine\world\format\io\GlobalItemDataHandlers;
 use RuntimeException;
 
 use function is_dir;
@@ -44,10 +45,10 @@ use function mkdir;
 class SimpleMapRenderer extends PluginBase{
 	/** @var SimpleMapRenderer|null */
 	private static $instance = null;
-	/** @var MapFactory */
-	protected $mapFactory;
-	/** @var Config */
-	protected $config;
+	
+	protected MapFactory $mapFactory;
+	
+	protected Config $config;
 
 	public function onLoad() : void{
 		self::$instance = $this;
@@ -68,15 +69,10 @@ class SimpleMapRenderer extends PluginBase{
 		$this->config = new Config($this->getDataFolder() . "config.json", Config::JSON);
 		$this->mapFactory = new MapFactory();
 
-		try{
-			ItemFactory::registerItem(new FilledMap());
-			ItemFactory::registerItem(new EmptyMap());
-		}catch(RuntimeException $e){
-			throw new PluginException("Another plugin is using the Map. Please disable other map-related plugins.");
-		}
-
-		Item::addCreativeItem(new EmptyMap());
-		//Item::addCreativeItem(new EmptyMap(2));
+		GlobalItemDataHandlers::getDeserializer()->map("minecraft:filled_map", fn() => clone ItemPlus::FILLED_MAP());
+        GlobalItemDataHandlers::getSerializer()->map(ItemPlus::FILLED_MAP(), fn() => new SavedItemData("minecraft:filled_map"));
+        StringToItemParser::getInstance()->register("minecraft:filled_map", fn() => clone ItemPlus::FILLED_MAP());
+        CreativeInventory::getInstance()->add(ItemPlus::FILLED_MAP());
 
 		$this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
 	}
